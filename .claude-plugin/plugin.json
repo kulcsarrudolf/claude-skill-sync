@@ -1,0 +1,10 @@
+{
+  "name": "skill-sync",
+  "displayName": "Skill Sync",
+  "version": "0.1.0",
+  "description": "Keep your Claude Code skills identical on every machine, through a git repository or a zip file.",
+  "author": { "name": "Rudolf Kulcsar" },
+  "repository": "https://github.com/kulcsarrudolf/claude-skill-sync",
+  "license": "MIT",
+  "keywords": ["skills", "sync", "backup", "dotfiles"]
+}
