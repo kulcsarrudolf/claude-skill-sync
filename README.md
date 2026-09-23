@@ -1,5 +1,7 @@
 # claude-skill-sync
 
+[![CI](https://github.com/kulcsarrudolf/claude-skill-sync/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kulcsarrudolf/claude-skill-sync/actions/workflows/ci.yml?query=branch%3Amain)
+
 A Claude Code plugin that keeps your personal skills identical on every machine you use.
 
 Claude Code stores skills in `~/.claude/skills`, one folder per skill, and has no built-in way to move them between computers.
