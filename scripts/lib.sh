@@ -1,9 +1,11 @@
 # shellcheck shell=bash
 # Shared functions for skill-sync scripts.
 #
-# This file is sourced, never executed. Callers set `set -euo pipefail`
-# themselves; every function here is written to be safe under it.
+# This file is sourced, never executed. Sourcing it turns on strict mode in
+# the caller, so every script runs under `set -euo pipefail`.
 # Target: bash 3.2 (no associative arrays, no mapfile, no ${var,,}).
+
+set -euo pipefail
 
 if [ -n "${SS_LIB_LOADED:-}" ]; then
   return 0
