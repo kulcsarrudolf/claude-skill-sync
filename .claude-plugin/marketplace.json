@@ -1,0 +1,16 @@
+{
+  "name": "claude-skill-sync",
+  "owner": {
+    "name": "Rudolf Kulcsar"
+  },
+  "metadata": {
+    "description": "Skill Sync: keep your Claude Code skills identical on every machine."
+  },
+  "plugins": [
+    {
+      "name": "skill-sync",
+      "source": "./",
+      "description": "Keep your Claude Code skills identical on every machine, through a git repository or a zip file."
+    }
+  ]
+}
