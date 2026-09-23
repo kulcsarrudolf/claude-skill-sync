@@ -40,6 +40,13 @@ jobs:
           ln -s /bin/bash "$RUNNER_TEMP/bash32/bash"
           echo "$RUNNER_TEMP/bash32" >>"$GITHUB_PATH"
 
+      # The runner's preinstalled Node has a root-owned global prefix, so
+      # npm install -g fails without it.
+      - uses: actions/setup-node@v7
+        if: runner.os == 'Linux'
+        with:
+          node-version: 22
+
       - name: Install tools (Ubuntu)
         if: runner.os == 'Linux'
         run: |
