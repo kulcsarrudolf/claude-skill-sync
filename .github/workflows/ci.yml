@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Stacked pushes to the same branch or PR cancel the older run instead of queueing.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  BATS_VERSION: 1.13.0
+  CLAUDE_CODE_VERSION: 2.1.280
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tools (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install bats-core shellcheck
+          # Homebrew's bash 5 comes first in PATH on macos-latest. Put a shim
+          # for the system bash 3.2 ahead of it so bats and everything it
+          # spawns run under the bash that macOS users actually have.
+          mkdir -p "$RUNNER_TEMP/bash32"
+          ln -s /bin/bash "$RUNNER_TEMP/bash32/bash"
+          echo "$RUNNER_TEMP/bash32" >>"$GITHUB_PATH"
+
+      # The runner's preinstalled Node has a root-owned global prefix, so
+      # npm install -g fails without it.
+      - uses: actions/setup-node@v7
+        if: runner.os == 'Linux'
+        with:
+          node-version: 22
+
+      - name: Install tools (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck zip unzip
+          npm install -g "bats@${BATS_VERSION}"
+
+      - name: Tool versions
+        run: |
+          bash --version | head -n 1
+          shellcheck --version
+          bats --version
+
+      - name: shellcheck
+        run: shellcheck scripts/*.sh
+
+      - name: bats
+        run: bats tests
+
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install Claude Code
+        run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+
+      # Validation is offline and needs no authentication, so a failure here
+      # is a real manifest problem and fails the run.
+      - name: claude plugin validate
+        run: claude plugin validate .
