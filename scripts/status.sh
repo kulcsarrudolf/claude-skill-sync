@@ -20,5 +20,3 @@ esac
 
 ss_require_config
 cat "$(ss_config_file)"
-
-ss_ci_probe() { echo $1; }
